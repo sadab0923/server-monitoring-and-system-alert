@@ -36,3 +36,5 @@ def monitor():
         send_alert(f"High Disk Usage: {disk}%")
 
 monitor()
+
+
