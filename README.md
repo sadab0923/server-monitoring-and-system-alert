@@ -1,9 +1,38 @@
-# server-monitoring-and-system-alert
-This project is designed to continuously monitor system performance and automatically send alerts when predefined thresholds are exceeded. It helps ensure system reliability, prevents downtime, and enables quick response to critical issues.
+import psutil
+import smtplib
 
+# Thresholds
+CPU_THRESHOLD = 80
+MEM_THRESHOLD = 80
+DISK_THRESHOLD = 80
 
-/home/shahnoor2203/monitor-env/bin/python [“This path points to the Python interpreter inside my virtual environment.
-I used a virtual environment to isolate project dependencies, so the script uses the correct Python version and installed libraries like psutil.”]
+def send_alert(message):
+    sender = "your_email@gmail.com"
+    receiver = "receiver@gmail.com"
+    password = "your_password"
 
-The cron job runs every 5 minutes and executes my Python script using the virtual environment interpreter.
-This ensures the script runs with the correct dependencies and continuously monitors system health.”
+    server = smtplib.SMTP('smtp.gmail.com', 587)
+    server.starttls()
+    server.login(sender, password)
+
+    subject = "Server Alert!"
+    body = f"Subject: {subject}\n\n{message}"
+
+    server.sendmail(sender, receiver, body)
+    server.quit()
+
+def monitor():
+    cpu = psutil.cpu_percent()
+    memory = psutil.virtual_memory().percent
+    disk = psutil.disk_usage('/').percent
+
+    if cpu > CPU_THRESHOLD:
+        send_alert(f"High CPU Usage: {cpu}%")
+
+    if memory > MEM_THRESHOLD:
+        send_alert(f"High Memory Usage: {memory}%")
+
+    if disk > DISK_THRESHOLD:
+        send_alert(f"High Disk Usage: {disk}%")
+
+monitor()
